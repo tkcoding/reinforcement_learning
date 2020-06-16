@@ -10,7 +10,7 @@ import pandas as pd
 # environment changes
 # Dual process need to be coded
 # Action only includes releasing from the staging area.
-
+#Edited at abc
 
 # Introduce machine status that will be up or down at a certain percentage.
 class Environment(object):
@@ -107,7 +107,6 @@ class Environment(object):
         obs['queue_lot'] = np.digitize(total_queue,bins)
         obs['lot_number'] = np.digitize(_instaging,bins)
         obs['action_num'] = _instaging
-        # print("Observation : {} at time {}".format(obs,self.NOW))
         return obs
 
     def returnQuadInfo(self, done=False):
@@ -132,9 +131,6 @@ class Environment(object):
             if self.jobs[each_job].process_queue_time > 60 and each_job not in self.miss_cqt:
                 self.miss_cqt.append(each_job)
                 cqt_lot += 1
-        # print("Miss CQT :",self.miss_cqt)
-        # throughput = np.divide(np.int(totalJobsDone), np.int(self.NOW))
-
         return cqt_lot
 
     # Specially made for environment machine retrieval information
@@ -203,10 +199,10 @@ class Environment(object):
         # Always give the action for the longest lot stay inside the list
         # Release or not release.
         # Every single time step the environment might have changes.
+
         if self.checkCompletion() is True:
             print("Simulation over")
             return self.returnQuadInfo(done=True)
-
         self.queue_time_addition() # Adding into queue time counting
         if action:
             job_id = self.getEmptyJobs('CVD') # Getting CVD job.
@@ -226,6 +222,7 @@ class Environment(object):
 
 
         if self.getEmptyJobs('CDO'):
+            print("Empty Jobs time : {} , list  {} ".format(self.NOW,self.getEmptyJobs('CDO')))
             for eachJob in self.getEmptyJobs('CDO'):
                 process = 'CDO'
 

@@ -23,6 +23,7 @@ class Machine(object):
         self.now = 0
         self.jobsDone = []
         self.process = process
+        self.status = True
         #TODO :  self.status # cater for change of state of down and up. Can add additional status
 
     def processJob(self, jobID, time, pTime):
@@ -41,6 +42,16 @@ class Machine(object):
         assert self.machineBusy == True
         self.jobsDone.append(self.onJob)
         self.machineBusy = False
+        return
+
+    def tool_down(self):
+        assert self.status == False
+        self.status = False
+        return
+
+    def tool_up(self):
+        assert self.status == True
+        self.status = True
         return
 
 """
