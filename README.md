@@ -1,2 +1,11 @@
-# reinforcement_learning
-Using Q-learning on multiple job-shop process with constraint
+# Q-Learning on job-shop problem with constraint.
+
+
+Optimize multiple job-shop process with constraint using Q-learning
+
+
+```
+To run the code:
+python q_learning_schedule.py 
+```
+
