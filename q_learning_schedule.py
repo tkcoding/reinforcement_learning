@@ -52,7 +52,6 @@ class QLearning(object):
 
         # we do not include the values of the next state if terminated
         self.Q_value[self.state_info, tr.a] += self.config['ALPHA'] * (tr.r + self.config['GAMMA'] * max_q_next * (1-tr.done) - self.Q_value[self.state_info, tr.a])
-        print("Q value table :",len(self.Q_value))
         return
 
     def train(self):
@@ -114,7 +113,7 @@ if __name__ == '__main__':
 	'SIMULATION_TIME' : 2880, # One day episode is 1440
 	'ALPHA' : 0.1,
 	'EPSILON' : 1, # Randomly try other action for exploration
-	'N_EPISODES' : 2000,
+	'N_EPISODES' : 50,
 	'GAMMA' : 0.9,
 	'INIT_REWARD' : 100, # Each successful lot out from staging will not minus the initial reward
 	'DONE_REWARD' : 100, # If lot miss drumbeat
@@ -137,7 +136,8 @@ if __name__ == '__main__':
 
     config['ORDER_OF_PROCESSING_CVD'] = order_cvd
     config['ORDER_OF_PROCESSING_CDO'] = order_cdo
-
+    print(order_cvd)
+    print(order_cdo)
     model = QLearning(config=config)
     model.train()
     print(config['SCHEDULE_ACTION'])

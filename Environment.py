@@ -19,7 +19,7 @@ class Environment(object):
         # Initializing alll the process time needed for CVD and CDO
         self.process_completion_cvd = np.zeros((self.config['NUM_MACHINES_CVD'], self.config['NUM_JOBS']))
         self.process_completion_cdo = np.zeros((self.config['NUM_MACHINES_CDO'], self.config['NUM_JOBS']))
-        self.df_log = pd.read_csv("log_data_per_day.csv")
+        self.df_log = pd.read_csv("sample_file.csv")
 
 
     def reset(self):
