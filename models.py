@@ -55,8 +55,8 @@ class Machine(object):
         return
 
 """
-ASOM job attribute
-Pilot on CVD -> CDO Loop
+Job attribute
+Pilot on PROC1 -> PROC2 Loop
 """
 class Jobs(object):
     def __init__(self, name):
@@ -66,12 +66,12 @@ class Jobs(object):
         self.jobBusy_p2 = False
         self.processDetails = []
         self.now = 0
-        self.cvd_completion = False
-        self.cdo_completion = False
+        self.proc1_completion = False
+        self.proc2_completion = False
         self.machineVisited = 0
         self.inQueue = False
         self.process_queue_time = 0
-        self.next_process = 'CVD'
+        self.next_process = 'PROC1'
         self.noOfProcess = 0
         self.inStaging = False
 
@@ -79,7 +79,7 @@ class Jobs(object):
 
     def getProcessed(self,process):
         # print("{} requested".format(self.jobName))
-        if process == 'CVD':
+        if process == 'PROC1':
             assert self.jobBusy_p1 == False
             self.jobBusy_p1 = True
             self.inStaging = False
@@ -90,16 +90,16 @@ class Jobs(object):
 
     def releaseJob(self,process):
         # print("{} released".format(self.jobName))
-        if process == 'CVD':
+        if process == 'PROC1':
             assert self.jobBusy_p1 == True
             self.machineVisited += 1
             self.jobBusy_p1 = False
-            self.cvd_completion = True
-            self.next_process = 'CDO'
+            self.proc1_completion = True
+            self.next_process = 'PROC2'
             self.inQueue = False
         else:
             assert self.jobBusy_p2 == True
             self.machineVisited += 1
             self.jobBusy_p2 = False
-            self.cdo_completion = True
+            self.proc2_completion = True
         return

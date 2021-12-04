@@ -22,7 +22,7 @@ class QLearning(object):
         Exploration is forced by epsilon-greedy
         """
         self.state_info, actions, max_value = self.env.generatePossibleAction(state)
-        # initial state info is {(0, 'CVD'): (), (1, 'CVD'): (), (2, 'CVD'): (), (3, 'CVD'): (), (4, 'CVD'): (), (0, 'CDO'): (), (1, 'CDO'): (), (2, 'CDO'): ()}
+        # initial state info is {(0, 'PROC1'): (), (1, 'PROC1'): (), (2, 'PROC1'): (), (3, 'PROC1'): (), (4, 'PROC1'): (), (0, 'PROC2'): (), (1, 'PROC2'): (), (2, 'PROC2'): ()}
         # import pdb; pdb.set_trace()
         # epsilon greedy function is to capture certain chance of random choices of action
         if self.eps > 0. and np.random.rand() < self.eps:
@@ -66,11 +66,10 @@ class QLearning(object):
             while not done:
                 action_to_take = self.act(self.obs) # Action should be only releases lot according to obs
                 self.new_obs, number_cqt_lot, done, info = self.env.step(action_to_take)
-                reward = -number_cqt_lot*self.config['CQT_penalty']
-                # Edit reward to throughput*self.config['INIT_throughput_reward'] - cqt*self.config['INIT_cqt_penalty']
+                reward = -number_cqt_lot*self.config['penalty']
                 if done:
                     lot_completed = self.env.completedLotNumber()
-                    print("Miss CQT lot ",self.env.miss_cqt)
+                    print("Miss job",self.env.miss_job)
                     print("Completed : ",lot_completed)
                     if lot_completed == self.config['NUM_JOBS']:
                         print("Completed all lot")
@@ -104,40 +103,40 @@ class QLearning(object):
         return
 
 if __name__ == '__main__':
+    # Do edit into the machine name
     config = {
-    'NUM_MACHINES_CVD' : 9, # Initial value to start with for CVD entity
-	'NUM_MACHINES_CDO' : 4, # Initial Value to start with for CDO entity
-	'NUM_JOBS' : 186, # This is running on historical ASOM lot per day
+    'NUM_MACHINES_PROC1' : 9, # Initial value to start with for PROC1 entity
+	'NUM_MACHINES_PROC2' : 4, # Initial Value to start with for PROC2 entity
+	'NUM_JOBS' : 186, # Historical job needed to process (it can be per day)
 	'SCHEDULE_ACTION' : [],
 	'RELEASE_ACTION' : [],
 	'SIMULATION_TIME' : 2880, # One day episode is 1440
 	'ALPHA' : 0.1,
 	'EPSILON' : 1, # Randomly try other action for exploration
-	'N_EPISODES' : 50,
+	'N_EPISODES' : 2000,
 	'GAMMA' : 0.9,
 	'INIT_REWARD' : 100, # Each successful lot out from staging will not minus the initial reward
 	'DONE_REWARD' : 100, # If lot miss drumbeat
-    'CQT_penalty' : 4 # Randomnly assigned weight for CQT misses
+    'penalty' : 4 # Randomnly assigned weight for missed job.
     }
-    order_cvd = []
-    order_cdo = []
+    order_proc1 = []
+    order_proc2 = []
 
     # Below is for static historical one day data training to setup environment
     # Lot will based on arrival time at staging to register
+    # Each job is going to attach to a machine itself (this is random assignment)
     for i in range(config['NUM_JOBS']):
-        mac_cvd = [i for i in range(config['NUM_MACHINES_CVD'])]
-        mac_cvd = random.sample(mac_cvd, config['NUM_MACHINES_CVD'])
-        order_cvd.append(tuple(mac_cvd))
+        mac_proc1 = [i for i in range(config['NUM_MACHINES_PROC1'])]
+        mac_proc1 = random.sample(mac_proc1, config['NUM_MACHINES_PROC1'])
+        order_proc1.append(tuple(mac_proc1))
 
     for i in range(config['NUM_JOBS']):
-        mac_cdo = [i for i in range(config['NUM_MACHINES_CDO'])]
-        mac_cdo = random.sample(mac_cdo, config['NUM_MACHINES_CDO'])
-        order_cvd.append(tuple(mac_cdo))
+        mac_proc2 = [i for i in range(config['NUM_MACHINES_PROC2'])]
+        mac_proc2 = random.sample(mac_proc2, config['NUM_MACHINES_PROC2'])
+        order_proc2.append(tuple(mac_proc2))
 
-    config['ORDER_OF_PROCESSING_CVD'] = order_cvd
-    config['ORDER_OF_PROCESSING_CDO'] = order_cdo
-    print(order_cvd)
-    print(order_cdo)
+    config['ORDER_OF_PROCESSING_PROC1'] = order_proc1
+    config['ORDER_OF_PROCESSING_PROC2'] = order_proc2
     model = QLearning(config=config)
     model.train()
     print(config['SCHEDULE_ACTION'])
