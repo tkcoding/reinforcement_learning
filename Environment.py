@@ -42,17 +42,16 @@ class Environment(object):
         return self.returnObs()
 
     def getProcessTime(self, macID, jID , process):
-        # import pdb; pdb.set_trace()
-        # This part is to implement ASOM job and machine processing time
+        # This part is to include unknown processing time.
         # Taking from current data table run time
         if process == 'PROC1':
             if self.jobs_processed_proc1[macID, jID] == 0:
-                t_time = 55 + random.gauss(5, 3) # Include some variation
+                t_time = 58 # Include some variation
                 self.jobs_processed_proc1[macID, jID] = t_time
                 return self.jobs_processed_proc1[macID, jID]
         else: # PROC2
             if self.jobs_processed_proc2[macID, jID] == 0:
-                t_time = 50 + random.gauss(5, 3)
+                t_time = 55
                 self.jobs_processed_proc2[macID, jID] = t_time
                 return self.jobs_processed_proc2[macID, jID]
 
@@ -115,7 +114,6 @@ class Environment(object):
             reward = 0
         else:
             reward = self.calcMetrics()
-        # print("Missing Lot : ",reward)
         info = "nothing" # Redundant now
         return (obs, reward, done, info)
 
@@ -219,10 +217,8 @@ class Environment(object):
 
 
         if self.getEmptyJobs('PROC2'):
-            print("Empty Jobs time : {} , list  {} ".format(self.NOW,self.getEmptyJobs('PROC2')))
             for eachJob in self.getEmptyJobs('PROC2'):
                 process = 'PROC2'
-
                 if self.getEmptyMachines('PROC2'):
                     # print("Empty Machine : ",self.getEmptyMachines('PROC2'))
                     # print('PROC2 Time now : {} , dispatching : {}'.format(self.NOW,self.jobs[eachJob].jobID))

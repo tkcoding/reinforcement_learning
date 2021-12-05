@@ -3,6 +3,7 @@ import random
 from collections import defaultdict, OrderedDict, namedtuple
 from Environment import Environment
 import itertools
+import pandas as pd
 import matplotlib.pyplot as plt
 Transition = namedtuple('Transition',['s','a','r','s_next','done'])
 
@@ -54,6 +55,9 @@ class QLearning(object):
         self.Q_value[self.state_info, tr.a] += self.config['ALPHA'] * (tr.r + self.config['GAMMA'] * max_q_next * (1-tr.done) - self.Q_value[self.state_info, tr.a])
         return
 
+    def moving_average(self,x, w):
+        return np.convolve(x, np.ones(w), 'valid') / w
+
     def train(self):
         self.eps = self.config['EPSILON']
         print("Inside training data")
@@ -94,6 +98,9 @@ class QLearning(object):
         for r in range(self.config['N_EPISODES']):
             reward_matrix[r] = self.reward_history[r]
         plt.plot(reward_matrix)
+        plt.plot(pd.Series(reward_matrix).rolling(100).mean())
+        plt.title('Reward graph overtime')
+        plt.ylabel('Reward')
         plt.show()
             # with open('logfile_25_100.txt','a') as fp:
             #     fp.write("Episode {}\nReward {}\nThroughPut {}\n".format(str(episode), str(reward_collected), str(thrput)))
@@ -107,13 +114,13 @@ if __name__ == '__main__':
     config = {
     'NUM_MACHINES_PROC1' : 9, # Initial value to start with for PROC1 entity
 	'NUM_MACHINES_PROC2' : 4, # Initial Value to start with for PROC2 entity
-	'NUM_JOBS' : 186, # Historical job needed to process (it can be per day)
+	'NUM_JOBS' : 184, # Historical job needed to process (it can be per day)
 	'SCHEDULE_ACTION' : [],
 	'RELEASE_ACTION' : [],
 	'SIMULATION_TIME' : 2880, # One day episode is 1440
-	'ALPHA' : 0.1,
+	'ALPHA' : 0.01,
 	'EPSILON' : 1, # Randomly try other action for exploration
-	'N_EPISODES' : 2000,
+	'N_EPISODES' : 4000,
 	'GAMMA' : 0.9,
 	'INIT_REWARD' : 100, # Each successful lot out from staging will not minus the initial reward
 	'DONE_REWARD' : 100, # If lot miss drumbeat
