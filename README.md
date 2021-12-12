@@ -12,3 +12,5 @@ To run the code:
 python q_learning_schedule.py 
 ```
 
+Q-learning can be further improve by using SARSA/SARSAMAX or even DQN.
+
